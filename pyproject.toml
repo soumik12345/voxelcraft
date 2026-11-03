@@ -1,0 +1,121 @@
+[project]
+name = "voxelcraft"
+dynamic = ["version"]
+description = "A library for training automatic building systems for Minecraft"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "datasets>=5.1.0",
+    "gradio>=6.31.0",
+    "numpy>=1.26.0",
+    "pillow>=10.0.0",
+    "plotly>=6.0.0",
+    "rich>=15.0.0",
+    "trackio>=0.43.0",
+]
+
+[project.scripts]
+voxelcraft-visualize = "voxelcraft.visualization.meta_3d_craft:main"
+
+[project.optional-dependencies]
+cpu = [
+    "torch>=2.13.0"
+]
+cuda12 = [
+    "torch>=2.13.0",
+]
+cuda13 = [
+    "torch>=2.15.0",
+]
+tpu = [
+    "torch>=2.13.0",
+    "torch-tpu>=0.2.0",
+]
+
+[tool.uv]
+conflicts = [
+    [
+        { extra = "cpu" },
+        { extra = "cuda12" },
+        { extra = "cuda13" },
+        { extra = "tpu" },
+    ],
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu129", extra = "cuda12" },
+    { index = "pytorch-cu134", extra = "cuda13" },
+    { index = "pytorch-cpu", extra = "tpu" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu134"
+url = "https://download.pytorch.org/whl/cu134"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "uv>=0.4.20",
+    "pytest>=8.3.3",
+    "pytest-asyncio>=0.24.0",
+    "aiosqlite>=0.21",
+    "greenlet>=3.0.0",
+    "isort>=5.13.2",
+    "black>=24.10.0",
+    "ruff>=0.6.9",
+    "textual-dev>=1.7.0",
+    "openai>=1.108.2",
+]
+docs = [
+    "zensical>=0.0.73",
+    "mkdocstrings-python>=1.11.1",
+]
+build = [
+    "twine>=5.1.1",
+    "wheel>=0.40",
+    "build>=0.10",
+    "pyinstaller>=6.0",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["voxelcraft"]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["I", "F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["voxelcraft"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
